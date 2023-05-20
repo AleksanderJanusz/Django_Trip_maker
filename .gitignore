@@ -1,0 +1,4 @@
+.idea/
+*.pyc
+virtualenv/
+db.sqlite3
