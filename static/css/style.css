@@ -1,0 +1,126 @@
+
+ul.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #7D5EBF;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+ul.menu li {
+    float: right;
+}
+
+ul.menu li.left {
+    float: left;
+}
+
+ul.menu li a.button {
+    display: block;
+    color: #FFF;
+    text-align: center;
+    padding: 20px 16px;
+    text-decoration: none;
+    background-color: #533CA6;
+    border-left: 1px solid #907ABF;
+    border-right: 1px solid #907ABF;
+    height: 70px;
+}
+
+ul.menu li a.button:hover {
+    background-color: #907ABF;
+}
+
+
+body {
+    margin: 0;
+    padding-top: 60px; /* Odległość nad menu */
+}
+
+.menu-button {
+    width: 67px;
+    height: 60px;
+}
+
+
+/* ____NEW___ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.left-menu {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    height: 100vh;
+    width: 200px;
+    background-color: #533CA6;
+    color: #fff;
+    padding: 20px 0 20px 0;
+    border-top: 1px solid #907ABF;
+}
+
+.left-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.left-menu li {
+    margin-bottom: 0px;
+}
+
+.left-menu a {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    padding: 10px;
+    background-color: #7D5EBF;
+    border: 3px solid #533CA6;
+}
+
+.left-menu a:hover {
+    background-color: #907ABF;
+}
+
+.content {
+    margin-left: 200px;
+    padding: 20px;
+}
+
+input {
+    display: block;
+}
+/*stopka*/
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+.footer {
+    background-color: #261519;
+    color: #FFFFFF;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: left;
+}
+
+.footer p {
+    display: inline-block;
+    margin: 0;
+    padding: 10px;
+}
