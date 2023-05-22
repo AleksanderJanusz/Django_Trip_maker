@@ -1,3 +1,6 @@
+ul {
+    list-style-type: none;
+}
 
 ul.menu {
     list-style-type: none;
@@ -39,6 +42,7 @@ ul.menu li a.button:hover {
 body {
     margin: 0;
     padding-top: 60px; /* Odległość nad menu */
+    font-family: Arial, sans-serif;
 }
 
 .menu-button {
@@ -54,9 +58,6 @@ body {
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
-}
 
 .left-menu {
     position: fixed;
@@ -77,7 +78,7 @@ body {
 }
 
 .left-menu li {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .left-menu a {
@@ -94,13 +95,16 @@ body {
 }
 
 .content {
+    background-color: rgba(255, 255, 255, 0.90);
     margin-left: 200px;
-    padding: 20px;
+    margin-right: 200px;
+    padding: 44px;
 }
 
 input {
     display: block;
 }
+
 /*stopka*/
 html {
     height: 100%;

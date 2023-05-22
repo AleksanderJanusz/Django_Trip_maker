@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static "css/places.css" %}">
+    <ul id="country" class="places">
+        {% for place in places %}
+            <li data-api="{{ place.id }}" class="places">{{ place.country }}</li>
+        {% endfor %}
+    </ul>
+    <script src="{% static 'js/places.js' %}"></script>
+{% endblock %}
