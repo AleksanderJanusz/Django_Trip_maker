@@ -23,14 +23,12 @@ def test_login_post(user):
     client = Client()
     url = reverse('login')
     data = {
-        'username': 'users',
+        'username': 'user',
         'password': 'password'
     }
     response = client.post(url, data)
-    assert response.status_code == 200
-
-
-# Zapytać jak sprawdzić obecnego zalogowanego usera -> potrzebne do tego testu oraz wylogowania
+    u = User.objects.first()
+    assert response.status_code == 302
 
 
 @pytest.mark.django_db

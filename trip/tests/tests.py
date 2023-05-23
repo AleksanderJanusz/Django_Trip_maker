@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from trip.forms import AddPlaceForm
+from trip.forms import AddPlaceForm, AddAttractionForm
 from trip.models import *
 from django.test import TestCase
 from django.test import Client
@@ -76,7 +76,7 @@ def test_attraction_details_view(attractions):
 
 
 @pytest.mark.django_db
-def test_add_place_logout():
+def test_add_place_logged_out():
     client = Client()
     url = reverse('add_place')
     response = client.get(url)
@@ -86,7 +86,7 @@ def test_add_place_logout():
 
 
 @pytest.mark.django_db
-def test_add_place_login_get(users):
+def test_add_place_logged_in_get(users):
     client = Client()
     client.force_login(users)
     url = reverse('add_place')
@@ -96,7 +96,7 @@ def test_add_place_login_get(users):
 
 
 @pytest.mark.django_db
-def test_add_place_login_post(users):
+def test_add_place_logged_in_post(users):
     client = Client()
     client.force_login(users)
     url = reverse('add_place')
@@ -131,10 +131,105 @@ def test_add_place_login_post(users):
                                   'country': 'country',
                                   'description': ''
                               }, 302)])
-def test_add_place_login_post_if_valid(users, data, result):
+def test_add_place_logged_in_post_if_valid(users, data, result):
     client = Client()
     client.force_login(users)
     url = reverse('add_place')
     response = client.post(url, data)
     assert response.status_code == result
 
+
+@pytest.mark.django_db
+def test_add_attraction_logged_out():
+    client = Client()
+    url = reverse('add_attraction')
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_add_place_logged_in_get(users, places):
+    client = Client()
+    client.force_login(users)
+    url = reverse('add_attraction')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'], AddAttractionForm)
+    response_places = [place for place in response.context['places']]
+    places_all = [place for place in Place.objects.all()]
+    assert response_places == places_all
+
+
+@pytest.mark.django_db
+def test_add_attraction_logged_in_post_checked_valid(users, places):
+    client = Client()
+    client.force_login(users)
+    url = reverse('add_attraction')
+    data = {
+        'name': 'name',
+        'description': 'description',
+        'time': 'time',
+        'place': '1',
+        'checkbox': 'True',
+        'persons': '1',
+        'from': '10',
+        'to': '20',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    redirect_url = reverse('index')
+    assert response.url.startswith(redirect_url)
+    assert len(Attraction.objects.all()) == 1
+    assert len(PlaceAttraction.objects.all()) == 1
+    assert len(Cost.objects.all()) == 2
+
+
+@pytest.mark.django_db
+def test_add_attraction_logged_in_post_un_checked_valid(users, places):
+    client = Client()
+    client.force_login(users)
+    url = reverse('add_attraction')
+    data = {
+        'name': 'name',
+        'description': 'description',
+        'time': 'time',
+        'place': '1',
+        'checkbox': '',
+        'persons': '1',
+        'from': '10',
+        'to': '0',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    redirect_url = reverse('index')
+    assert len(Cost.objects.all()) == 1
+    assert response.url.startswith(redirect_url)
+    assert len(Attraction.objects.all()) == 1
+    assert len(PlaceAttraction.objects.all()) == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize('data, result',
+                         [({'name': '', 'description': 'description', 'time': 'time', 'place': '1',
+                            'checkbox': 'True', 'persons': '1', 'from': '10', 'to': '0', }, 200),
+                          ({'name': 'name', 'description': 'description', 'time': 'time', 'place': '1',
+                            'checkbox': 'True', 'persons': '-1', 'from': '10', 'to': '0', }, 200),
+                          ({'name': 'name', 'description': 'description', 'time': 'time', 'place': '1',
+                            'checkbox': 'True', 'persons': '1', 'from': '-1', 'to': '0', }, 200),
+                          ({'name': 'name', 'description': 'description', 'time': 'time', 'place': '1',
+                            'checkbox': 'True', 'persons': '1', 'from': '10', 'to': '-1', }, 200),
+                          ({'name': 'name', 'description': 'description', 'time': 'time', 'place': '1',
+                            'checkbox': 'True', 'persons': '', 'from': '10', 'to': '-1', }, 200),
+                          ({'name': 'name', 'description': 'description', 'time': 'time', 'place': '1',
+                            'checkbox': 'True', 'persons': '1', 'from': '', 'to': '-1', }, 200),
+                          ({'name': 'name', 'description': 'description', 'time': 'time', 'place': '1',
+                            'checkbox': 'True', 'persons': '1', 'from': '10', 'to': '', }, 200)
+                          ])
+def test_add_attraction_logged_in_post_checked_in_valid(users, places, data, result):
+    client = Client()
+    client.force_login(users)
+    url = reverse('add_attraction')
+    response = client.post(url, data)
+    assert response.status_code == result

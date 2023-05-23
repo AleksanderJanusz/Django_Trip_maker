@@ -5,8 +5,8 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView
 
-from trip.forms import AddPlaceForm
-from trip.models import Place, Attraction
+from trip.forms import AddPlaceForm, AddAttractionForm
+from trip.models import Place, Attraction, Cost, PlaceAttraction
 
 
 # Create your views here.
@@ -62,3 +62,39 @@ class AddPlaceView(LoginRequiredMixin, View):
             place.save()
             return redirect('index')
         return render(request, 'trip/place_form.html', {'form': form})
+
+
+class AddAttractionView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = AddAttractionForm()
+        return render(request, 'trip/attraction_form.html', {'form': form,
+                                                             'places': Place.objects.all()})
+
+    def post(self, request):
+        form = AddAttractionForm(request.POST)
+        check = request.POST.get('checkbox')
+        place = int(request.POST.get('place'))
+        try:
+            cost_from = int(request.POST.get('from'))
+            cost_to = int(request.POST.get('to'))
+            persons = int(request.POST.get('persons'))
+        except ValueError:
+            return render(request, 'trip/attraction_form.html', {'form': form,
+                                                                 'places': Place.objects.all(),
+                                                                 'error': 'error'})
+
+        if cost_to < 0 or cost_from < 0 or persons < 0:
+            return render(request, 'trip/attraction_form.html', {'form': form,
+                                                                 'places': Place.objects.all(),
+                                                                 'error': 'error'})
+        if form.is_valid():
+            attraction = form.save()
+            if check:
+                Cost.objects.create(persons=persons, cost=cost_from, attraction_id=attraction.id)
+                Cost.objects.create(persons=persons, cost=cost_to, attraction_id=attraction.id)
+            else:
+                Cost.objects.create(persons=persons, cost=cost_from, attraction_id=attraction.id)
+            PlaceAttraction.objects.create(attraction_id=attraction.id, place_id=place)
+            return redirect('index')
+        return render(request, 'trip/attraction_form.html', {'form': form,
+                                                             'places': Place.objects.all()})
