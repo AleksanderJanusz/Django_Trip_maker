@@ -104,6 +104,9 @@ body {
 input {
     display: block;
 }
+textarea {
+    display: block;
+}
 
 /*stopka*/
 html {
@@ -145,4 +148,13 @@ html {
 .my-links {
     text-decoration: none;
     color: white;
+}
+
+/*list in list button */
+.left-menu .list-list a{
+    background-color: #533CA6;
+}
+
+.left-menu .list-list a:hover {
+    background-color: #18F092;
 }

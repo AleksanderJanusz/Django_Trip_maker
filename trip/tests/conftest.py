@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.auth.models import User
 
 from trip.models import Place, Attraction, PlaceAttraction
 
@@ -25,3 +26,8 @@ def attractions_places(places, attractions):
         place.attraction.set(attractions)
         lst.append(place)
     return lst
+
+
+@pytest.fixture
+def users():
+    return User.objects.create(username='user')

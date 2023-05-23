@@ -1,7 +1,11 @@
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import CreateView
 
+from trip.forms import AddPlaceForm
 from trip.models import Place, Attraction
 
 
@@ -42,3 +46,19 @@ class AttractionDetailView(View):
     def get(self, request, pk):
         attraction = Attraction.objects.get(pk=pk)
         return render(request, 'trip/attraction_details.html', {'attraction': attraction})
+
+
+class AddPlaceView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = AddPlaceForm()
+        return render(request, 'trip/place_form.html', {'form': form})
+
+    def post(self, request):
+        form = AddPlaceForm(request.POST)
+        if form.is_valid():
+            place = form.save(commit=False)
+            place.country = form.cleaned_data['country'].capitalize()
+            place.name = form.cleaned_data['name'].capitalize()
+            place.save()
+            return redirect('index')
+        return render(request, 'trip/place_form.html', {'form': form})

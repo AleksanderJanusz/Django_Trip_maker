@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -24,6 +25,7 @@ class Travel(models.Model):
     name = models.CharField(max_length=255)
     status = models.IntegerField(choices=GENRE_CHOICES, default=0)
     place_attraction = models.ManyToManyField('PlaceAttraction', through='Days')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

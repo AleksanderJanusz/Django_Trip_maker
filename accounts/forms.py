@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+from trip.models import Place
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Nazwa użytkownika')
@@ -31,3 +33,4 @@ class AddUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email']
+
