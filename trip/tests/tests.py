@@ -18,7 +18,8 @@ def test_place_view_order(places):
     client = Client()
     url = reverse('places')
     response = client.get(url)
-    places_fixture = [p.country for p in places]
+    places_fixture_distinct = set([p.country for p in places])
+    places_fixture = [p for p in places_fixture_distinct]
     places_fixture.sort()
     places_response = [p.country for p in response.context['places']]
     assert response.status_code == 200

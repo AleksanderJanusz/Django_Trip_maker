@@ -8,11 +8,15 @@ function listOfAttractions(li_main, my_url) {
                 const li = document.createElement('li');
                 const pp = document.createElement('p');
                 const p = document.createElement('p');
-                li.classList.add('grand-children')
+                const a = document.createElement('a');
+                a.href = '/trip/attraction/' + element.id
+                a.classList.add('my-links');
+                li.classList.add('grand-children');
                 pp.innerText = element.name;
                 p.innerText = element.description;
-                li.appendChild(pp);
-                li.appendChild(p);
+                a.appendChild(pp);
+                a.appendChild(p);
+                li.appendChild(a);
                 ul.appendChild(li);
             })
             li_main.appendChild(ul);
@@ -38,7 +42,6 @@ function listOfPlaces(country, my_url) {
 
                 li.addEventListener('click', function (event) {
                     const placeId = this.dataset.api;
-                    console.log('dupa')
 
                     if (this.children.length < 1) {
                         for (let element of this.parentElement.children) {
@@ -47,7 +50,8 @@ function listOfPlaces(country, my_url) {
                             }
                         }
 
-                        const my_url = '/trip/get_attraction_by_place/?place_api=' + placeId
+                        const my_url = '/trip/get_attraction_by_place/?place_api=' + placeId;
+                        console.log(my_url);
                         listOfAttractions(li, my_url)
                     }
                 })

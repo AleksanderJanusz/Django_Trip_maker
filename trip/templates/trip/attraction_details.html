@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+    <ul>
+        <li><h2>{{ attraction.name }}</h2></li>
+        <li class="details-text">{{ attraction.description }}<br/><br/></li>
+        {% if attraction.time %}
+            <li class="details-rest">
+                <div style="display: flex">
+                    <p><b>Przewidywany czas na atrakcje:</b></p>
+                    <p> {{ attraction.time }}</p>
+                </div>
+            </li>
+        {% endif %}
+        {% if attraction.cost_set.all %}
+            <li class="details-rest">
+                <div style="display: flex">
+                    {% if attraction.cost_set.all.count > 1 %}
+                        {% if attraction.cost_set.all.0.persons > 1 %}
+                            <p><b>Przybliżony koszt za {{ attraction.cost_set.all.0.persons }} osoby:</b></p>
+                        {% else %}
+                            <p><b>Przybliżony koszt za osobę:</b></p>
+                        {% endif %}
+                        <p> od {{ attraction.cost_set.all.0.cost }} do {{ attraction.cost_set.all.1.cost }} zł</p>
+                    {% else %}
+                        {% if attraction.cost_set.all.0.persons > 1 %}
+                            <p><b>Przybliżony koszt za {{ attraction.cost_set.all.0.persons }} osoby:</b></p>
+                        {% else %}
+                            <p><b>Przybliżony koszt za osobę:</b></p>
+                        {% endif %}
+                        {% if attraction.cost_set.all.0.cost %}
+                            <p> {{ attraction.cost_set.all.0.cost }} zł</p>
+                        {% else %}
+                            <p> atrakcja jest darmowa</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}

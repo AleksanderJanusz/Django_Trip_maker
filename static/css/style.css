@@ -128,3 +128,21 @@ html {
     margin: 0;
     padding: 10px;
 }
+
+/*Details attraction*/
+.details-text {
+    font-size: 24px;
+}
+.details-rest {
+    font-size: 18px;
+}
+.details-rest p{
+    font-size: 18px;
+    margin: 4px;
+}
+
+/*links in places*/
+.my-links {
+    text-decoration: none;
+    color: white;
+}

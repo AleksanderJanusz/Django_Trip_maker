@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
-from trip.models import Place
+from trip.models import Place, Attraction
 
 
 # Create your views here.
@@ -32,6 +32,13 @@ class GetAttractionByPlaceApi(View):
         place_id = int(request.GET.get('place_api'))
         place = Place.objects.get(pk=place_id)
         attractions = [{'name': attraction.name,
-                        'description': attraction.description}
+                        'description': attraction.description,
+                        'id': attraction.id}
                        for attraction in place.attraction.all()]
         return JsonResponse(attractions, safe=False)
+
+
+class AttractionDetailView(View):
+    def get(self, request, pk):
+        attraction = Attraction.objects.get(pk=pk)
+        return render(request, 'trip/attraction_details.html', {'attraction': attraction})
