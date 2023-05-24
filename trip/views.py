@@ -6,7 +6,7 @@ from django.views import View
 from django.views.generic import CreateView
 
 from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm, AddDaysForm
-from trip.models import Place, Attraction, Cost, PlaceAttraction, Travel
+from trip.models import Place, Attraction, Cost, PlaceAttraction, Travel, Days
 
 
 # --------------------API---------------------
@@ -130,14 +130,17 @@ class AddTravelView(LoginRequiredMixin, View):
 
 class AddTravelStepTwoView(LoginRequiredMixin, View):
     def get(self, request, pk):
+        days = Days.objects.filter(travel_id=pk)
+        orders = days.distinct('order')
         trip = Travel.objects.get(pk=pk)
         form = AddDaysForm()
         places = Place.objects.all().order_by('country').distinct('country')
-        return render(request, 'trip/add_travel_part2.html', {'form': form,
-                                                              'trip': trip,
-                                                              'places': places})
+        return render(request, 'trip/add_travel_part2.html', {'form': form, 'trip': trip, 'places': places,
+                                                              'days': days, 'orders': orders})
 
     def post(self, request, pk):
+        days = Days.objects.filter(travel_id=pk)
+        orders = days.distinct('order')
         trip = Travel.objects.get(pk=pk)
         form = AddDaysForm(request.POST)
         places = Place.objects.all().order_by('country').distinct('country')
@@ -145,7 +148,7 @@ class AddTravelStepTwoView(LoginRequiredMixin, View):
             day = form.save(commit=False)
             day.travel_id = pk
             day.save()
-            return redirect('index')
-        return render(request, 'trip/add_travel_part2.html', {'form': form,
-                                                              'trip': trip,
-                                                              'places': places})
+            url = reverse_lazy('add_travel_part2', kwargs={'pk': pk})
+            return redirect(url)
+        return render(request, 'trip/add_travel_part2.html', {'form': form, 'trip': trip, 'places': places,
+                                                              'days': days, 'orders': orders})

@@ -1,6 +1,23 @@
 <ul>
-    <li><h2>{{ trip.name }}</h2></li>
-    <li style="display: flex">
+    <li style="display: flex; justify-content: space-between">
+        <h2>{{ trip.name }}</h2>
+        <a href="#" class="end-button-trip">Zakończ</a>
+    </li>
+    <li>
         <h3>Status: {{ trip.get_status_display }}</h3>
     </li>
+    {% for order in orders %}
+        <li>
+            <h4>Dzień: {{ order.order }}</h4>
+            <ul>
+                {% for day in days %}
+                    <li>
+                        {% if day.order == order.order %}
+                            <a href='{% url 'attractions' day.place_attraction.attraction.id %}'>{{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
 </ul>

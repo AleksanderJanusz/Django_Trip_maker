@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from trip.forms import AddPlaceForm, AddAttractionForm
+from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm
 from trip.models import *
 from django.test import TestCase
 from django.test import Client
@@ -236,3 +236,52 @@ def test_add_attraction_logged_in_post_checked_in_valid(users, places, data, res
     url = reverse('add_attraction')
     response = client.post(url, data)
     assert response.status_code == result
+
+
+@pytest.mark.django_db
+def test_attraction_place_api(attractions_places):
+    client = Client()
+    place = Place.objects.first()
+    url = reverse('attraction_place_api') + f'?place_api={place.id}'
+    response = client.get(url)
+    assert response.status_code == 200
+    attractions_places_id = PlaceAttraction.objects.filter(place_id=place.id)
+    attractions_places_id = [place.id for place in attractions_places_id]
+    attractions_places_id_json = [place['id'] for place in response.json()]
+    assert attractions_places_id_json == attractions_places_id
+
+
+@pytest.mark.django_db
+def test_add_travel_logged_out():
+    client = Client()
+    url = reverse('add_travel')
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_add_travel_logged_in_get(users):
+    client = Client()
+    client.force_login(users)
+    url = reverse('add_travel')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'], AddTravelForm)
+
+
+@pytest.mark.django_db
+def test_add_travel_logged_in_post(users):
+    client = Client()
+    client.force_login(users)
+    url = reverse('add_travel')
+    data = {
+        'name': 'name',
+        'status': '1',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    travel_id = Travel.objects.last().id
+    redirect_url = reverse('add_travel_part2', kwargs={'pk': travel_id})
+    assert response.url.startswith(redirect_url)
