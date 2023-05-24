@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let countries = document.querySelector('#country').children;
 
 
+
     for (let country of countries) {
         country.addEventListener('click', function (event) {
             event.preventDefault()

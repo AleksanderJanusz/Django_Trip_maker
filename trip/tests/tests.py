@@ -177,13 +177,16 @@ def test_add_attraction_logged_in_post_checked_valid(users, places):
         'from': '10',
         'to': '20',
     }
+    len_attraction = len(Attraction.objects.all())
+    len_place = len(PlaceAttraction.objects.all())
+    len_cost = len(Cost.objects.all())
     response = client.post(url, data)
     assert response.status_code == 302
     redirect_url = reverse('index')
     assert response.url.startswith(redirect_url)
-    assert len(Attraction.objects.all()) == 1
-    assert len(PlaceAttraction.objects.all()) == 1
-    assert len(Cost.objects.all()) == 2
+    assert len(Attraction.objects.all()) == len_attraction + 1
+    assert len(PlaceAttraction.objects.all()) == len_place + 1
+    assert len(Cost.objects.all()) == len_cost + 2
 
 
 @pytest.mark.django_db

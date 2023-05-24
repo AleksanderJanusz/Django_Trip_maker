@@ -5,21 +5,11 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView
 
-from trip.forms import AddPlaceForm, AddAttractionForm
-from trip.models import Place, Attraction, Cost, PlaceAttraction
+from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm, AddDaysForm
+from trip.models import Place, Attraction, Cost, PlaceAttraction, Travel
 
 
-# Create your views here.
-class IndexView(View):
-    def get(self, request):
-        return render(request, 'trip/index.html')
-
-
-class PlacesView(View):
-    def get(self, request):
-        places = Place.objects.all().order_by('country').distinct('country')
-        return render(request, 'trip/places.html', {'places': places})
-
+# --------------------API---------------------
 
 class GetPlaceByCountryApi(View):
 
@@ -40,6 +30,26 @@ class GetAttractionByPlaceApi(View):
                         'id': attraction.id}
                        for attraction in place.attraction.all()]
         return JsonResponse(attractions, safe=False)
+
+
+class GetAttractionPlace(View):
+    def get(self, request):
+        place_id = int(request.GET.get('place_api'))
+        place = PlaceAttraction.objects.filter(place_id=place_id)
+        attractions = [{'id': attraction.id} for attraction in place]
+        return JsonResponse(attractions, safe=False)
+
+
+# ---------------------------Django----------------------------
+class IndexView(View):
+    def get(self, request):
+        return render(request, 'trip/index.html')
+
+
+class PlacesView(View):
+    def get(self, request):
+        places = Place.objects.all().order_by('country').distinct('country')
+        return render(request, 'trip/places.html', {'places': places})
 
 
 class AttractionDetailView(View):
@@ -98,3 +108,44 @@ class AddAttractionView(LoginRequiredMixin, View):
             return redirect('index')
         return render(request, 'trip/attraction_form.html', {'form': form,
                                                              'places': Place.objects.all()})
+
+
+# HERE WE START ADD TRIP VIEWS
+
+class AddTravelView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = AddTravelForm()
+        return render(request, 'trip/add_travel.html', {'form': form})
+
+    def post(self, request):
+        form = AddTravelForm(request.POST)
+        if form.is_valid():
+            travel = form.save(commit=False)
+            travel.user = request.user
+            travel.save()
+            url = reverse_lazy('add_travel_part2', kwargs={'pk': travel.id})
+            return redirect(url)
+        return render(request, 'trip/add_travel.html', {'form': form})
+
+
+class AddTravelStepTwoView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        trip = Travel.objects.get(pk=pk)
+        form = AddDaysForm()
+        places = Place.objects.all().order_by('country').distinct('country')
+        return render(request, 'trip/add_travel_part2.html', {'form': form,
+                                                              'trip': trip,
+                                                              'places': places})
+
+    def post(self, request, pk):
+        trip = Travel.objects.get(pk=pk)
+        form = AddDaysForm(request.POST)
+        places = Place.objects.all().order_by('country').distinct('country')
+        if form.is_valid():
+            day = form.save(commit=False)
+            day.travel_id = pk
+            day.save()
+            return redirect('index')
+        return render(request, 'trip/add_travel_part2.html', {'form': form,
+                                                              'trip': trip,
+                                                              'places': places})

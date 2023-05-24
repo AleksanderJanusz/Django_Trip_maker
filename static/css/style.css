@@ -107,6 +107,10 @@ input {
 textarea {
     display: block;
 }
+select {
+    display: block;
+}
+
 
 /*stopka*/
 html {

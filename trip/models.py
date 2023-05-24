@@ -18,9 +18,9 @@ class TravelNotes(models.Model):
 
 class Travel(models.Model):
     GENRE_CHOICES = (
-        (0, 'planing the travel'),
-        (1, 'ready to go'),
-        (2, 'I am back'),
+        (0, 'Planowanie'),
+        (1, 'W drogę!'),
+        (2, 'Zakończona'),
     )
     name = models.CharField(max_length=255)
     status = models.IntegerField(choices=GENRE_CHOICES, default=0)

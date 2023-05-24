@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    {% include 'trip/base_trip_view.html' %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="select_country">Wybierz Kraj</label>
+            <select name="country" id="select_country">
+                <option>---------</option>
+                {% for place in places %}
+                    <option value="{{ place.id }}">{{ place.country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div id="div_place" style="margin-top: 10px"></div>
+
+        <div id="day_form" style="margin-top: 10px">
+            {{ form.as_p }}
+        </div>
+        <input type="submit">
+        <script src="{% static 'js/add_travel.js' %}"></script>
+    </form>
+{% endblock %}
