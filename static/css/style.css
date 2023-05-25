@@ -189,3 +189,60 @@ html {
 .end-button-trip:hover {
     background-color: #907ABF;
 }
+
+.button-list {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    background-color: rgba(85, 75, 165, 0.95);
+    width: 50%;
+    text-align: center;
+    margin-right: -10px;
+    margin-bottom: 15px;
+}
+.button-list:hover {
+    background-color: #907ABF;
+}
+
+.button-list-status {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #7D5EBF;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    width: 40%;
+    text-align: center;
+}
+.button-list-status:hover {
+    background-color: #907ABF;
+}
+.button-list-of-status {
+    display: block;
+    padding: 10px 20px;
+    background-color: #7D5EBF;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+}
+.button-list-of-status:hover {
+    background-color: #18F092;
+}
+
+
+.tooltipText {
+    position: absolute;
+    display: block;
+    background-color: white;
+    color: black;
+    border: solid black 1px;
+    font-size: 20px;
+    z-index: 1;
+}

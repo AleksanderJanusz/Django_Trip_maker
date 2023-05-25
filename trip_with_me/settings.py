@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'trip',
     'accounts',
+    'rest_framework',
+    'django_extensions',
+
 ]
 
 MIDDLEWARE = [

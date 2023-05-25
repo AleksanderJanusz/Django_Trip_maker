@@ -1,12 +1,14 @@
+import generic as generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView
-
+from django.views.generic import UpdateView
+from rest_framework import generics
 from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm, AddDaysForm
 from trip.models import Place, Attraction, Cost, PlaceAttraction, Travel, Days
+from trip.serializers import TravelSerializer
 
 
 # --------------------API---------------------
@@ -152,3 +154,38 @@ class AddTravelStepTwoView(LoginRequiredMixin, View):
             return redirect(url)
         return render(request, 'trip/add_travel_part2.html', {'form': form, 'trip': trip, 'places': places,
                                                               'days': days, 'orders': orders})
+
+
+class TravelView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'trip/travels.html',
+                      {'travels': Travel.objects.filter(user_id=request.user.id).order_by('name')})
+
+
+class TravelDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        days = Days.objects.filter(travel_id=pk)
+        orders = days.distinct('order')
+        trip = Travel.objects.get(pk=pk)
+        return render(request, 'trip/travel_details.html',
+                      {'trip': trip, 'days': days, 'orders': orders})
+
+
+class DayView(LoginRequiredMixin, View):
+    def get(self, request, trip_pk, order):
+        days = Days.objects.filter(travel_id=trip_pk).filter(order=order)
+        return render(request, 'trip/day.html', {'days': days})
+
+
+class DayDetailsView(LoginRequiredMixin, UpdateView):
+    model = Days
+    fields = '__all__'
+    template_name = 'trip/day_details.html'
+    success_url = reverse_lazy('index')
+
+
+# -------------SERIALIZER---------------
+
+class TravelStatusSerializer(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Travel.objects.all()
+    serializer_class = TravelSerializer

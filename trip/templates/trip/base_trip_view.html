@@ -1,7 +1,7 @@
 <ul>
     <li style="display: flex; justify-content: space-between">
         <h2>{{ trip.name }}</h2>
-        <a href="#" class="end-button-trip">Zakończ</a>
+        <a href="{% url 'travels' %}" class="end-button-trip" id="end-button">Zakończ</a>
     </li>
     <li>
         <h3>Status: {{ trip.get_status_display }}</h3>

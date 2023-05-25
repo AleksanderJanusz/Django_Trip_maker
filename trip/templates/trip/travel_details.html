@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <ul>
+        <li style="display: flex; justify-content: space-between">
+            <h2 class="form-a" id="trip-name">{{ trip.name }}</h2>
+            <h2><input type="text" value="{{ trip.name }}" class="d-none" id="trip-name-in"></h2>
+            <a href="{% url 'travels' %}" class="end-button-trip">Powrót</a>
+        </li>
+        <li>
+            <h3 style="display: flex">
+                Status:
+                <a href="#" class="form-a" id="my-status" style="margin-left: 10px">
+                    {{ trip.get_status_display }}
+                </a>
+
+                <select name="status" id="status" style="margin-left: 10px" class="d-none" data-pk="{{ trip.id }}">
+                    {% for choice in trip.GENRE_CHOICES %}}
+                        <option value="{{ choice.0 }}"
+                                {% if choice.0 == trip.status %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+
+            </h3>
+        </li>
+        {% for order in orders %}
+            <li>
+                <a href="{% url 'day' trip.pk order.order %}" class="form-a days">
+                    <h4>Dzień: {{ order.order }}</h4>
+                </a>
+                <ul>
+                    {% for day in days %}
+                        <li>
+                            {% if day.order == order.order %}
+                                <a class="form-a places" href='{% url 'attractions' day.place_attraction.attraction.id %}'>
+                                    {{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+    <p id="p-token" class="d-none">{{ csrf_token }}</p>
+    <script src="{% static 'js/details.js' %}"></script>
+{% endblock %}

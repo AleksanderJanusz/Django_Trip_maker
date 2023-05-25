@@ -10,6 +10,11 @@ urlpatterns = [
     path('add/place/', views.AddPlaceView.as_view(), name='add_place'),
     path('add/attraction/', views.AddAttractionView.as_view(), name='add_attraction'),
     path('add/travel/', views.AddTravelView.as_view(), name='add_travel'),
-    path('add/travel/part2/<int:pk>', views.AddTravelStepTwoView.as_view(), name='add_travel_part2'),
+    path('add/travel/part2/<int:pk>/', views.AddTravelStepTwoView.as_view(), name='add_travel_part2'),
+    path('travels/', views.TravelView.as_view(), name='travels'),
+    path('travels/details/<int:pk>/', views.TravelDetailView.as_view(), name='travel_details'),
+    path('travels/<int:pk>', views.TravelStatusSerializer.as_view(), name='travels_status'),
+    path('day/<int:trip_pk>/<int:order>/', views.DayView.as_view(), name='day'),
+    path('day/detail/<int:pk>/', views.DayDetailsView.as_view(), name='day_detail'),
 
 ]
