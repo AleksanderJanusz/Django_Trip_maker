@@ -2,8 +2,10 @@ function statusTravel(my_url, status_choice, status_name) {
     let token = document.querySelector('#p-token');
     fetch(
         my_url,
-        {method: 'PATCH', headers: {"X-CSRFToken": token.innerText, 'Content-type': 'application/json'},
-        body: JSON.stringify({status: status_choice})}
+        {
+            method: 'PATCH', headers: {"X-CSRFToken": token.innerText, 'Content-type': 'application/json'},
+            body: JSON.stringify({status: status_choice})
+        }
     )
         .then(
             function (resp) {
@@ -12,13 +14,15 @@ function statusTravel(my_url, status_choice, status_name) {
                 }
                 return resp.json()
             }).then(data => {
-                 status_name.innerText = 'Status: ' + data.choice[status_choice][1];
+        status_name.innerText = 'Status: ' + data.choice[status_choice][1];
     })
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     let travel = document.querySelectorAll('.button-list');
     let status = document.querySelectorAll('.button-list-status');
+    let trips = document.querySelectorAll('.my_trip');
+
 
     window.addEventListener('click', function () {
         status.forEach(status_element => {
@@ -26,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             status_element.nextElementSibling.lastElementChild.firstElementChild.classList.add('d-none');
         })
     })
+
 
     travel.forEach(element => element.addEventListener('mouseover', function () {
 
@@ -43,12 +48,12 @@ document.addEventListener('DOMContentLoaded', function () {
         let my_ul = element.nextElementSibling.lastElementChild.firstElementChild;
         my_ul.classList.remove('d-none');
 
-        my_ul.addEventListener('mouseout', function (){
+        my_ul.addEventListener('mouseout', function () {
             this.classList.add('d-none');
         })
 
         for (let pick_status of my_ul.children) {
-            pick_status.addEventListener('mouseover', function (event){
+            pick_status.addEventListener('mouseover', function (event) {
                 event.stopImmediatePropagation();
                 this.parentElement.classList.remove('d-none');
             })

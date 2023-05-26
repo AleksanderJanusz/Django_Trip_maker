@@ -68,8 +68,8 @@ class PlaceAttraction(models.Model):
 
 
 class Days(models.Model):
-    order = models.IntegerField(default=1)
     place_attraction = models.ForeignKey(PlaceAttraction, on_delete=models.CASCADE)
+    order = models.IntegerField(default=1)
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE)
 
     def __str__(self):

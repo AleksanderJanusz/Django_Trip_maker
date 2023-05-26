@@ -1,12 +1,15 @@
 from django.urls import path
 from trip import views
 
+
 urlpatterns = [
-    path('places/', views.PlacesView.as_view(), name='places'),
-    path('attraction/<int:pk>/', views.AttractionDetailView.as_view(), name='attractions'),
     path('get_place_by_country/', views.GetPlaceByCountryApi.as_view(), name='places_by_country_api'),
     path('get_attraction_by_place/', views.GetAttractionByPlaceApi.as_view(), name='attraction_by_place_api'),
     path('get_attraction_place/', views.GetAttractionPlace.as_view(), name='attraction_place_api'),
+    path('get_countries/', views.GetCountryDistinctApi.as_view(), name='countries_api'),
+
+    path('places/', views.PlacesView.as_view(), name='places'),
+    path('attraction/<int:pk>/', views.AttractionDetailView.as_view(), name='attractions'),
     path('add/place/', views.AddPlaceView.as_view(), name='add_place'),
     path('add/attraction/', views.AddAttractionView.as_view(), name='add_attraction'),
     path('add/travel/', views.AddTravelView.as_view(), name='add_travel'),
@@ -16,5 +19,8 @@ urlpatterns = [
     path('travels/<int:pk>', views.TravelStatusSerializer.as_view(), name='travels_status'),
     path('day/<int:trip_pk>/<int:order>/', views.DayView.as_view(), name='day'),
     path('day/detail/<int:pk>/', views.DayDetailsView.as_view(), name='day_detail'),
+    path('day/delete/<int:pk>/', views.DeleteDayView.as_view(), name='day_delete'),
+    path('travel/delete/<int:pk>/', views.DeleteTravelView.as_view(), name='travel_delete'),
+    path('day/delete/<int:trip_pk>/<int:order>', views.DaysDeleteView.as_view(), name='day_detail_delete'),
 
 ]

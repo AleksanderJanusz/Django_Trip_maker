@@ -3,7 +3,7 @@
 {% block content %}
     <ul>
         {% for travel in travels %}
-            <li>
+            <li class="my_trip">
                 <a href="{% url 'travel_details' travel.id %}" class="end-button-trip button-list">{{ travel.name }}</a>
                 <a href="#" class="button-list-status d-none" id="{{ travel.id }}">
                     Status: {{ travel.get_status_display }}
@@ -21,6 +21,8 @@
             </li>
         {% endfor %}
     </ul>
+
+
     <p id="p-token" class="d-none">{{ csrf_token }}</p>
     <script src="{% static 'js/travels.js' %}"></script>
 {% endblock %}

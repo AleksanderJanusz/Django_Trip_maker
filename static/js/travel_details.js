@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         element.addEventListener('mouseover', function (event) {
             let span = document.createElement('span');
             span.innerText = 'edytuj';
-            span.classList.add('tooltipText')
+            span.classList.add('tooltipText');
             this.appendChild(span);
             this.lastElementChild.addEventListener('mouseover', function (event) {
                 event.stopImmediatePropagation();
@@ -85,7 +85,8 @@ document.addEventListener('DOMContentLoaded', function () {
         element.addEventListener('mouseover', function (event) {
             let span = document.createElement('span');
             span.innerText = 'szczegóły';
-            span.classList.add('tooltipText')
+            span.classList.add('tooltipText');
+            span.style = "font-size: 12px";
             this.appendChild(span);
             this.lastElementChild.addEventListener('mouseover', function (event) {
                 event.stopImmediatePropagation();

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <ul>
+        <li style="display: flex; justify-content: space-between">
+            <h2>{{ trip.name }} </h2>
+            <h2><input type="text" value="{{ trip.name }}" class="d-none" id="trip-name-in"></h2>
+            <a href="{% url 'travel_delete' trip.id %}" class="del-button-trip">Usuń podróż</a>
+            <div style="display: flex">
+                <a href="{% url 'travel_details' trip.id %}" class="edit-button-trip">Tryb edycji</a>
+                <a href="{% url 'travels' %}" class="end-button-trip">Powrót</a>
+            </div>
+
+        </li>
+        <li>
+            <h3>Status: {{ trip.get_status_display }}</h3>
+        </li>
+        {% for order in orders %}
+            <li>
+                <h4>
+                    <a href="{% url 'day_detail_delete' trip.pk order.order %}" class="form-b days parentElement">
+                        Dzień: {{ order.order }}
+                    </a>
+                </h4>
+                <ul>
+                    {% for day in days %}
+                        <li>
+                            {% if day.order == order.order %}
+                                {{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -167,11 +167,12 @@ def test_add_attraction_logged_in_post_checked_valid(users, places):
     client = Client()
     client.force_login(users)
     url = reverse('add_attraction')
+    place = Place.objects.first().id
     data = {
         'name': 'name',
         'description': 'description',
         'time': 'time',
-        'place': '1',
+        'place': place,
         'checkbox': 'True',
         'persons': '1',
         'from': '10',
@@ -194,11 +195,12 @@ def test_add_attraction_logged_in_post_un_checked_valid(users, places):
     client = Client()
     client.force_login(users)
     url = reverse('add_attraction')
+    place = Place.objects.first().id
     data = {
         'name': 'name',
         'description': 'description',
         'time': 'time',
-        'place': '1',
+        'place': place,
         'checkbox': '',
         'persons': '1',
         'from': '10',

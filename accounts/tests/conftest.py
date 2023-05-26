@@ -4,5 +4,5 @@ from django.contrib.auth.models import User, Permission
 
 @pytest.fixture
 def user():
-    u = User.objects.create(username='user', password='password')
+    u = User.objects.create_user(username='user', password='password')
     return u

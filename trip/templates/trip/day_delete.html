@@ -2,19 +2,15 @@
 {% load static %}
 {% block content %}
     <div style="display: flex; justify-content: space-between">
-        <h2>Dzień: {{ days.0.order }}</h2>
-        <div>
-            <a href="{% url 'add_travel_part2' days.0.travel_id %}" class="end-button-trip">Dodaj</a>
-            <a href="{% url 'travel_details' days.0.travel_id %}" class="end-button-trip">Powrót</a>
-        </div>
-
+        <h1>Dzień: {{ days.0.order }}</h1>
+        <a href="{% url 'travel_details' days.0.travel_id %}" class="end-button-trip">Powrót</a>
     </div>
 
     <h4>
         <ul id="ul">
             {% for day in days %}
                 <li>
-                    <a href="{% url 'day_detail' day.id %}" class="form-a">
+                    <a href="{% url 'day_delete' day.id %}" class="form-b">
                         {{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}
                     </a>
                 </li>

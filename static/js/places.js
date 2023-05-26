@@ -42,17 +42,22 @@ function listOfPlaces(country, my_url) {
 
                 li.addEventListener('click', function (event) {
                     const placeId = this.dataset.api;
+                    if (this.children.length > 0) {
+                        this.removeChild(this.lastElementChild)
 
-                    if (this.children.length < 1) {
-                        for (let element of this.parentElement.children) {
-                            if (element.children.length > 0) {
-                                element.removeChild(element.firstElementChild);
+                    } else {
+
+                        if (this.children.length < 1) {
+                            for (let element of this.parentElement.children) {
+                                if (element.children.length > 0) {
+                                    element.removeChild(element.firstElementChild);
+                                }
                             }
-                        }
 
-                        const my_url = '/trip/get_attraction_by_place/?place_api=' + placeId;
-                        console.log(my_url);
-                        listOfAttractions(li, my_url)
+                            const my_url = '/trip/get_attraction_by_place/?place_api=' + placeId;
+                            console.log(my_url);
+                            listOfAttractions(li, my_url)
+                        }
                     }
                 })
 
@@ -69,23 +74,29 @@ document.addEventListener('DOMContentLoaded', function () {
     let countries = document.querySelector('#country').children;
 
 
-
     for (let country of countries) {
         country.addEventListener('click', function (event) {
             event.preventDefault()
             const countryId = this.dataset.api
 
-            if (this.children.length < 1) {
-                for (let element of this.parentElement.children) {
-                    if (element.children.length > 0) {
-                        element.removeChild(element.firstElementChild);
-                    }
-                }
+            if (this.children.length > 0) {
+                this.removeChild(this.lastElementChild)
 
-                const my_url = '/trip/get_place_by_country/?place_country_api=' + countryId
-                listOfPlaces(country, my_url)
+            } else {
+
+                if (this.children.length < 1) {
+                    for (let element of this.parentElement.children) {
+                        if (element.children.length > 0) {
+                            element.removeChild(element.firstElementChild);
+                        }
+                    }
+
+                    const my_url = '/trip/get_place_by_country/?place_country_api=' + countryId
+                    listOfPlaces(country, my_url)
+                }
             }
         })
+
     }
 
 

@@ -10,7 +10,7 @@
             </ul>
         {% endif %}
         <div>
-            <label for="place">Wybierz miejscowość albo <a href="{% url 'add_place' %}" class="form-a">dodaj nową</a></label>
+            <label for="place"><strong>Wybierz miejscowość albo <a href="{% url 'add_place' %}" class="form-a">dodaj nową</a></strong></label>
             <select name="place">
                 {% for place in places %}
                     <option value="{{ place.id }}">{{ place.name }}</option>

@@ -1,5 +1,5 @@
 import generic as generic
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -12,6 +12,12 @@ from trip.serializers import TravelSerializer
 
 
 # --------------------API---------------------
+class GetCountryDistinctApi(View):
+    def get(self, request):
+        places = Place.objects.all().order_by('country').distinct('country')
+        countries = [{'country': place.country, 'id': place.id} for place in places]
+        return JsonResponse(countries, safe=False)
+
 
 class GetPlaceByCountryApi(View):
 
@@ -107,7 +113,7 @@ class AddAttractionView(LoginRequiredMixin, View):
             else:
                 Cost.objects.create(persons=persons, cost=cost_from, attraction_id=attraction.id)
             PlaceAttraction.objects.create(attraction_id=attraction.id, place_id=place)
-            return redirect('index')
+            return redirect('add_attraction')
         return render(request, 'trip/attraction_form.html', {'form': form,
                                                              'places': Place.objects.all()})
 
@@ -170,6 +176,13 @@ class TravelDetailView(LoginRequiredMixin, View):
         return render(request, 'trip/travel_details.html',
                       {'trip': trip, 'days': days, 'orders': orders})
 
+    def post(self, request, pk):
+        days = Days.objects.filter(travel_id=pk)
+        orders = days.distinct('order')
+        trip = Travel.objects.get(pk=pk)
+        return render(request, 'trip/travel_details_delete.html',
+                      {'trip': trip, 'days': days, 'orders': orders})
+
 
 class DayView(LoginRequiredMixin, View):
     def get(self, request, trip_pk, order):
@@ -181,7 +194,41 @@ class DayDetailsView(LoginRequiredMixin, UpdateView):
     model = Days
     fields = '__all__'
     template_name = 'trip/day_details.html'
-    success_url = reverse_lazy('index')
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        day = Days.objects.get(pk=pk)
+        return reverse_lazy('day', kwargs={'trip_pk': day.travel_id, 'order': day.order})
+
+
+class DeleteDayView(UserPassesTestMixin, View):
+    def test_func(self):
+        day = Days.objects.get(pk=self.kwargs['pk'])
+        return day.travel.user == self.request.user
+
+    def get(self, request, pk):
+        day = Days.objects.get(pk=pk)
+        order = day.order
+        trip_pk = day.travel_id
+        day.delete()
+        return redirect('day_detail_delete', order=order, trip_pk=trip_pk)
+
+
+class DaysDeleteView(LoginRequiredMixin, View):
+    def get(self, request, trip_pk, order):
+        days = Days.objects.filter(travel_id=trip_pk).filter(order=order)
+        return render(request, 'trip/day_delete.html', {'days': days})
+
+
+class DeleteTravelView(UserPassesTestMixin, View):
+    def test_func(self):
+        travel = Travel.objects.get(pk=self.kwargs['pk'])
+        return travel.user == self.request.user
+
+    def get(self, request, pk):
+        travel = Travel.objects.get(pk=pk)
+        travel.delete()
+        return redirect('travels')
 
 
 # -------------SERIALIZER---------------

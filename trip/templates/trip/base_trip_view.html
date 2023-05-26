@@ -13,7 +13,7 @@
                 {% for day in days %}
                     <li>
                         {% if day.order == order.order %}
-                            <a href='{% url 'attractions' day.place_attraction.attraction.id %}'>{{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}</a>
+                            <a class="form-a" href='{% url 'attractions' day.place_attraction.attraction.id %}'>{{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}</a>
                         {% endif %}
                     </li>
                 {% endfor %}

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from trip.models import Travel
+from trip.models import Travel, Place
 
 
 class TravelSerializer(serializers.ModelSerializer):

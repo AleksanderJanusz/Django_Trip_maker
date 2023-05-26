@@ -3,15 +3,21 @@
 {% block content %}
     <ul>
         <li style="display: flex; justify-content: space-between">
-            <h2 class="form-a" id="trip-name">{{ trip.name }}</h2>
+            <h2 class="form-a parentElement" id="trip-name">{{ trip.name }}</h2>
             <h2><input type="text" value="{{ trip.name }}" class="d-none" id="trip-name-in"></h2>
-            <a href="{% url 'travels' %}" class="end-button-trip">Powrót</a>
+            <div style="display: flex">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="del-button-trip" value="Tryb usuwania">
+                </form>
+                <a href="{% url 'travels' %}" class="end-button-trip">Powrót</a>
+            </div>
+
         </li>
         <li>
             <h3 style="display: flex">
-                Status:
-                <a href="#" class="form-a" id="my-status" style="margin-left: 10px">
-                    {{ trip.get_status_display }}
+                <a href="#" class="form-a parentElement" id="my-status">
+                    Status: {{ trip.get_status_display }}
                 </a>
 
                 <select name="status" id="status" style="margin-left: 10px" class="d-none" data-pk="{{ trip.id }}">
@@ -25,14 +31,17 @@
         </li>
         {% for order in orders %}
             <li>
-                <a href="{% url 'day' trip.pk order.order %}" class="form-a days">
-                    <h4>Dzień: {{ order.order }}</h4>
-                </a>
+                <h4>
+                    <a href="{% url 'day' trip.pk order.order %}" class="form-a days parentElement">
+                        Dzień: {{ order.order }}
+                    </a>
+                </h4>
                 <ul>
                     {% for day in days %}
                         <li>
                             {% if day.order == order.order %}
-                                <a class="form-a places" href='{% url 'attractions' day.place_attraction.attraction.id %}'>
+                                <a class="form-a places parentElement"
+                                   href='{% url 'attractions' day.place_attraction.attraction.id %}'>
                                     {{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}
                                 </a>
                             {% endif %}
@@ -43,5 +52,5 @@
         {% endfor %}
     </ul>
     <p id="p-token" class="d-none">{{ csrf_token }}</p>
-    <script src="{% static 'js/details.js' %}"></script>
+    <script src="{% static 'js/travel_details.js' %}"></script>
 {% endblock %}
