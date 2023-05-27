@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block content %}
+
+    <div class="input-container">
+        <input type="text" placeholder="Wpisz tekst">
+        <span class="icon">
+            <a href="#" id="search"><img src="{% static 'img/search.png' %}" alt="search" class="search"></a>
+        </span>
+    </div>
+
     <link rel="stylesheet" href="{% static "css/places.css" %}">
     <ul id="country" class="places">
         {% for place in places %}
@@ -10,3 +18,5 @@
     </ul>
     <script src="{% static 'js/places.js' %}"></script>
 {% endblock %}
+
+

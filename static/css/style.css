@@ -271,6 +271,7 @@ html {
 .del-button-trip:hover {
     background-color: #F01E1E;
 }
+
 .edit-button-trip {
     display: inline-block;
     padding: 10px 20px;
@@ -292,4 +293,37 @@ html {
 
 .form-b:hover {
     color: #F01E1E;
+}
+
+.search {
+    width: 28px;
+    height: 28px;
+}
+
+.input-container {
+    position: relative;
+    display: inline-block;
+}
+
+.input-container input {
+    border-radius: 20px;
+    border: 2px solid #533CA6;
+    background-color: #907ABF;
+    color: white;
+    padding: 10px;
+    padding-right: 40px; /* Miejsce na ikonę */
+    width: 200px;
+}
+
+.input-container input::placeholder {
+    color: white;
+}
+
+.input-container .icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 20px; /* Rozmiar ikony */
+    color: white; /* Kolor ikony */
 }
