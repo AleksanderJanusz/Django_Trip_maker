@@ -6,9 +6,9 @@ from django.db import models
 
 class TravelNotes(models.Model):
     GENRE_CHOICES = (
-        (0, 'before the travel'),
-        (1, 'during the travel'),
-        (2, 'after the travel'),
+        (0, 'Przed podróżą'),
+        (1, 'W trakcie podróży'),
+        (2, 'Po podróży'),
     )
     note = models.TextField()
     date = models.DateTimeField(auto_now_add=True, null=True)

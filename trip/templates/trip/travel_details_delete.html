@@ -33,5 +33,17 @@
                 </ul>
             </li>
         {% endfor %}
+        <li>
+            <h4>Notatki:</h4>
+            <ul>
+                {% for note in notes %}
+                    <a href="{% url 'delete_note' note.id %}" class="form-b">
+                        <li><strong>Status:</strong> {{ note.get_status_display }},
+                            <strong>data:</strong> {{ note.date }}</li>
+                        <li>{{ note.note }}<br/><br/></li>
+                    </a>
+                {% endfor %}
+            </ul>
+        </li>
     </ul>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from trip.models import Place, Attraction, Travel, Days
+from trip.models import Place, Attraction, Travel, Days, TravelNotes
 
 
 class AddPlaceForm(forms.ModelForm):
@@ -30,3 +30,10 @@ class AddDaysForm(forms.ModelForm):
         model = Days
         fields = ['place_attraction', 'order']
         labels = {'order': 'Dzień numer:', 'place_attraction': 'Wybierz atrakcję'}
+
+
+class AddNoteForm(forms.ModelForm):
+    class Meta:
+        model = TravelNotes
+        fields = ['note']
+

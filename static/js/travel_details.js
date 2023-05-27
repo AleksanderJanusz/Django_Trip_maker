@@ -45,9 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let name_in = document.querySelector('#trip-name-in');
     let name_now = document.querySelector('#trip-name');
     let editable = [name_now, stat_now].concat(Array.from(document.querySelectorAll('.days')));
-    let details = Array.from(document.querySelectorAll('.places'))
-    console.log(details)
-
+    let details = Array.from(document.querySelectorAll('.places'));
+    let note = document.querySelector('#note');
 
 
     window.addEventListener('click', function (event) {
@@ -96,6 +95,19 @@ document.addEventListener('DOMContentLoaded', function () {
             this.lastElementChild.remove();
         });
     })
+
+    note.addEventListener('mouseover', function (event) {
+        let span = document.createElement('span');
+        span.innerText = 'dodaj';
+        span.classList.add('tooltipText');
+        this.appendChild(span);
+        this.lastElementChild.addEventListener('mouseover', function (event) {
+            event.stopImmediatePropagation();
+        })
+    })
+    note.addEventListener('mouseout', function (event) {
+        this.lastElementChild.remove();
+    });
 
 
     stat_selector.addEventListener('click', function (event) {

@@ -4,10 +4,10 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, CreateView
 from rest_framework import generics
-from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm, AddDaysForm
-from trip.models import Place, Attraction, Cost, PlaceAttraction, Travel, Days
+from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm, AddDaysForm, AddNoteForm
+from trip.models import Place, Attraction, Cost, PlaceAttraction, Travel, Days, TravelNotes
 from trip.serializers import TravelSerializer
 
 
@@ -170,18 +170,20 @@ class TravelView(LoginRequiredMixin, View):
 
 class TravelDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
+        notes = TravelNotes.objects.filter(trip_id=pk)
         days = Days.objects.filter(travel_id=pk)
         orders = days.distinct('order')
         trip = Travel.objects.get(pk=pk)
         return render(request, 'trip/travel_details.html',
-                      {'trip': trip, 'days': days, 'orders': orders})
+                      {'trip': trip, 'days': days, 'orders': orders, 'notes': notes})
 
     def post(self, request, pk):
+        notes = TravelNotes.objects.filter(trip_id=pk)
         days = Days.objects.filter(travel_id=pk)
         orders = days.distinct('order')
         trip = Travel.objects.get(pk=pk)
         return render(request, 'trip/travel_details_delete.html',
-                      {'trip': trip, 'days': days, 'orders': orders})
+                      {'trip': trip, 'days': days, 'orders': orders, 'notes': notes})
 
 
 class DayView(LoginRequiredMixin, View):
@@ -229,6 +231,70 @@ class DeleteTravelView(UserPassesTestMixin, View):
         travel = Travel.objects.get(pk=pk)
         travel.delete()
         return redirect('travels')
+
+
+class AddNote(LoginRequiredMixin, CreateView):
+    model = TravelNotes
+    fields = ['note']
+    template_name = 'trip/add_note.html'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['note'].label = 'Notatka'
+        return form
+
+    def form_valid(self, form):
+        pk = self.kwargs['pk']
+        note = form.save(commit=False)
+        note.status = Travel.objects.get(pk=pk).status
+        note.trip_id = pk
+        note.save()
+        return redirect('travel_details', pk=pk)
+
+
+class DeleteNote(UserPassesTestMixin, View):
+    def test_func(self):
+        pk = TravelNotes.objects.get(pk=self.kwargs['pk']).trip_id
+        travel = Travel.objects.get(pk=pk)
+        return travel.user == self.request.user
+
+    def get(self, request, pk):
+        note = TravelNotes.objects.get(pk=pk)
+        travel_id = note.trip_id
+        note.delete()
+        return redirect('travel_details', pk=travel_id)
+
+
+class EditNote(UserPassesTestMixin, UpdateView):
+    def test_func(self):
+        pk = TravelNotes.objects.get(pk=self.kwargs['pk']).trip_id
+        travel = Travel.objects.get(pk=pk)
+        return travel.user == self.request.user
+
+    model = TravelNotes
+    fields = ['note', 'status']
+    template_name = 'trip/add_note.html'
+
+    def form_valid(self, form):
+        pk = self.kwargs['pk']
+        trip_id = TravelNotes.objects.get(pk=pk).trip_id
+        note = form.save(commit=False)
+        note.trip_id = trip_id
+        if not note.note.endswith('(edytowany)'):
+            note.note += ' (edytowany)'
+        note.save()
+        return redirect('travel_details', pk=trip_id)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['note'].label = 'Notatka'
+        return form
+
+    def get_form_kwargs(self):
+        note = super().get_form_kwargs()
+        if note['instance'].note.endswith('(edytowany)'):
+            note['instance'].note = note['instance'].note[:-12]
+        return note
 
 
 # -------------SERIALIZER---------------

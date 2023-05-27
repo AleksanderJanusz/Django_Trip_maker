@@ -50,6 +50,22 @@
                 </ul>
             </li>
         {% endfor %}
+        <li>
+            <h4>
+                <a href="{% url 'add_note' trip.pk %}" class="form-a parentElement" id="note">
+                    Notatki:
+                </a>
+            </h4>
+            <ul>
+                {% for note in notes %}
+                    <a href="{% url 'edit_note' note.id %}" class="form-a days parentElement">
+                        <li><strong>Status:</strong> {{ note.get_status_display }},
+                            <strong>data:</strong> {{ note.date }}</li>
+                        <li>{{ note.note }}<br/><br/></li>
+                    </a>
+                {% endfor %}
+            </ul>
+        </li>
     </ul>
     <p id="p-token" class="d-none">{{ csrf_token }}</p>
     <script src="{% static 'js/travel_details.js' %}"></script>

@@ -22,5 +22,8 @@ urlpatterns = [
     path('day/delete/<int:pk>/', views.DeleteDayView.as_view(), name='day_delete'),
     path('travel/delete/<int:pk>/', views.DeleteTravelView.as_view(), name='travel_delete'),
     path('day/delete/<int:trip_pk>/<int:order>', views.DaysDeleteView.as_view(), name='day_detail_delete'),
+    path('add/note/<int:pk>', views.AddNote.as_view(), name='add_note'),
+    path('delete/note/<int:pk>', views.DeleteNote.as_view(), name='delete_note'),
+    path('edit/note/<int:pk>', views.EditNote.as_view(), name='edit_note'),
 
 ]
