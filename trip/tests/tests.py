@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm
+from trip.forms import AddPlaceForm, AddAttractionForm, AddTravelForm, AddDaysForm
 from trip.models import *
 from django.test import TestCase
 from django.test import Client
@@ -287,3 +287,79 @@ def test_add_travel_logged_in_post(users):
     travel_id = Travel.objects.last().id
     redirect_url = reverse('add_travel_part2', kwargs={'pk': travel_id})
     assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_add_travel2_logged_in_get(users, travels, places):
+    client = Client()
+    client.force_login(users)
+    travel = Travel.objects.first()
+    url = reverse('add_travel_part2', kwargs={'pk': travel.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'], AddDaysForm)
+    assert response.context['trip'] == travel
+
+    response_places = [place for place in response.context['places']]
+    my_places = [place for place in Place.objects.all().order_by('country').distinct('country')]
+    assert response_places == my_places
+
+    response_days = [day for day in response.context['days']]
+    my_days = [day for day in Days.objects.filter(travel_id=travel.pk)]
+    assert response_days == my_days
+
+    response_orders = [order for order in response.context['orders']]
+    my_orders = [order for order in Days.objects.filter(travel_id=travel.pk).distinct('order')]
+    assert response_orders == my_orders
+
+
+@pytest.mark.django_db
+def test_add_travel2_logged_out():
+    client = Client()
+    url = reverse('add_travel_part2', kwargs={'pk': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_add_travel_logged_in_post(users, travels, attractions_places):
+    client = Client()
+    client.force_login(users)
+    travel = Travel.objects.first()
+    attraction_id = Attraction.objects.first().id
+    url = reverse('add_travel_part2', kwargs={'pk': travel.pk})
+    data = {
+        'order': '1',
+        'place_attraction': attraction_id,
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    day = Days.objects.last()
+    assert day.travel == travel
+    assert response.url.startswith(url)
+
+
+@pytest.mark.django_db
+def test_add_travel_view_logged_out():
+    client = Client()
+    url = reverse('travels')
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_add_travel_view_logged_in_get(ten_users, many_travels):
+    client = Client()
+    user = User.objects.first()
+    client.force_login(user)
+    url = reverse('travels')
+    response = client.get(url)
+    assert response.status_code == 200
+    travels = Travel.objects.filter(user_id=user.id).order_by('name')
+    assert [travel.user == user for travel in response.context['travels']]
+    assert len(travels) == len(response.context['travels'])
+

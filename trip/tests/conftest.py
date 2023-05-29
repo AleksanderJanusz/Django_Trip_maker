@@ -1,7 +1,9 @@
+from random import randint
+
 import pytest
 from django.contrib.auth.models import User
 
-from trip.models import Place, Attraction, PlaceAttraction
+from trip.models import Place, Attraction, PlaceAttraction, Travel
 
 
 @pytest.fixture
@@ -30,4 +32,19 @@ def attractions_places(places, attractions):
 
 @pytest.fixture
 def users():
-    return User.objects.create(username='user')
+    return User.objects.create_user(username='user', password='password')
+
+
+@pytest.fixture
+def travels(users):
+    return Travel.objects.create(name='name', user=users)
+
+
+@pytest.fixture
+def ten_users():
+    return [User.objects.create_user(username=f'user{i}', password=f'password{i}') for i in range(10)]
+
+
+@pytest.fixture
+def many_travels(ten_users):
+    return [[Travel.objects.create(name=f'name{j}', user=i) for j in range(5)] for i in ten_users]
