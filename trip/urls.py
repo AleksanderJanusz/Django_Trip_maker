@@ -7,6 +7,8 @@ urlpatterns = [
     path('get_attraction_by_place/', views.GetAttractionByPlaceApi.as_view(), name='attraction_by_place_api'),
     path('get_attraction_place/', views.GetAttractionPlace.as_view(), name='attraction_place_api'),
     path('get_countries/', views.GetCountryDistinctApi.as_view(), name='countries_api'),
+    path('get_places/', views.GetPlacesApi.as_view(), name='places_api'),
+    path('get_attractions/', views.GetAttractionsApi.as_view(), name='attractions_api'),
 
     path('places/', views.PlacesView.as_view(), name='places'),
     path('attraction/<int:pk>/', views.AttractionDetailView.as_view(), name='attractions'),

@@ -12,6 +12,22 @@ from trip.serializers import TravelSerializer
 
 
 # --------------------API---------------------
+class GetAttractionsApi(View):
+    def get(self, request):
+        attractions = [{'name': attraction.name,
+                        'description': attraction.description,
+                        'id': attraction.id}
+                       for attraction in Attraction.objects.all()]
+        return JsonResponse(attractions, safe=False)
+
+
+class GetPlacesApi(View):
+    def get(self, request):
+        places = Place.objects.all()
+        places = [{'name': place.name, 'id': place.id} for place in places]
+        return JsonResponse(places, safe=False)
+
+
 class GetCountryDistinctApi(View):
     def get(self, request):
         places = Place.objects.all().order_by('country').distinct('country')
