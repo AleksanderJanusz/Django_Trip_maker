@@ -324,11 +324,12 @@ def test_add_travel2_logged_out():
 
 
 @pytest.mark.django_db
-def test_add_travel_logged_in_post(users, travels, attractions_places):
+def test_add_travel2_logged_in_post(travels, attractions_places):
     client = Client()
-    client.force_login(users)
     travel = Travel.objects.first()
-    attraction_id = Attraction.objects.first().id
+    user = travel.user
+    client.force_login(user)
+    attraction_id = PlaceAttraction.objects.first().id
     url = reverse('add_travel_part2', kwargs={'pk': travel.pk})
     data = {
         'order': '1',
@@ -342,7 +343,7 @@ def test_add_travel_logged_in_post(users, travels, attractions_places):
 
 
 @pytest.mark.django_db
-def test_add_travel_view_logged_out():
+def test_travel_view_logged_out():
     client = Client()
     url = reverse('travels')
     response = client.get(url)
@@ -352,7 +353,7 @@ def test_add_travel_view_logged_out():
 
 
 @pytest.mark.django_db
-def test_add_travel_view_logged_in_get(ten_users, many_travels):
+def test_travel_view_logged_in_get(ten_users, many_travels):
     client = Client()
     user = User.objects.first()
     client.force_login(user)
@@ -362,4 +363,94 @@ def test_add_travel_view_logged_in_get(ten_users, many_travels):
     travels = Travel.objects.filter(user_id=user.id).order_by('name')
     assert [travel.user == user for travel in response.context['travels']]
     assert len(travels) == len(response.context['travels'])
+
+
+@pytest.mark.django_db
+def test_travel_details_view_logged_out():
+    client = Client()
+    url = reverse('travel_details', kwargs={'pk': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_travel_details_view_logged_in_get(notes):
+    client = Client()
+    travel = Travel.objects.first()
+    user = travel.user
+    client.force_login(user)
+    url = reverse('travel_details', kwargs={'pk': travel.pk})
+    response = client.get(url)
+    my_days = Days.objects.filter(travel_id=travel.pk)
+    assert response.status_code == 200
+    assert response.context['trip'] == travel
+    assert [day for day in response.context['days']] == [day for day in my_days]
+    assert [order for order in response.context['orders']] == [order for order in my_days.distinct('order')]
+    assert [note for note in response.context['notes']] == [note for note in
+                                                            TravelNotes.objects.filter(trip_id=travel.id)]
+
+
+@pytest.mark.django_db
+def test_travel_details_view_logged_in_post(notes):
+    client = Client()
+    travel = Travel.objects.first()
+    user = travel.user
+    client.force_login(user)
+    url = reverse('travel_details', kwargs={'pk': travel.pk})
+    response = client.post(url)
+    my_days = Days.objects.filter(travel_id=travel.pk)
+    assert response.status_code == 200
+    assert response.context['trip'] == travel
+    assert [day for day in response.context['days']] == [day for day in my_days]
+    assert [order for order in response.context['orders']] == [order for order in my_days.distinct('order')]
+    assert [note for note in response.context['notes']] == [note for note in
+                                                            TravelNotes.objects.filter(trip_id=travel.id)]
+
+
+@pytest.mark.django_db
+def test_day_view_logged_out():
+    client = Client()
+    url = reverse('day', kwargs={'trip_pk': 1, 'order': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_day_view_logged_in_get(days):
+    client = Client()
+    travel = Travel.objects.first()
+    user = travel.user
+    days = travel.days_set.first()
+    client.force_login(user)
+    url = reverse('day', kwargs={'trip_pk': travel.pk, 'order': days.order})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert [day for day in response.context['days']] == [day for day in Days.objects.filter(travel_id=travel.pk).filter(
+        order=days.order)]
+
+
+@pytest.mark.django_db
+def test_day_detail_view_logged_out():
+    client = Client()
+    url = reverse('day_detail', kwargs={'pk': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_day_detail_view_logged_in_get(days):
+    client = Client()
+    travel = Travel.objects.first()
+    user = travel.user
+    day = travel.days_set.first()
+    client.force_login(user)
+    url = reverse('day_detail', kwargs={'pk': day.id})
+    response = client.get(url)
+    assert response.status_code == 200
 

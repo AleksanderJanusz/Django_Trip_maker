@@ -3,7 +3,7 @@ from random import randint
 import pytest
 from django.contrib.auth.models import User
 
-from trip.models import Place, Attraction, PlaceAttraction, Travel
+from trip.models import Place, Attraction, PlaceAttraction, Travel, Days, TravelNotes
 
 
 @pytest.fixture
@@ -48,3 +48,15 @@ def ten_users():
 @pytest.fixture
 def many_travels(ten_users):
     return [[Travel.objects.create(name=f'name{j}', user=i) for j in range(5)] for i in ten_users]
+
+
+@pytest.fixture
+def days(travels, attractions_places):
+    return [Days.objects.create(order=randint(1, 7), travel_id=travels.id,
+                                place_attraction_id=attractions_places[randint(0, 3)].id) for _ in range(20)]
+
+
+@pytest.fixture
+def notes(days):
+    travel = Travel.objects.first()
+    return [TravelNotes.objects.create(note=f'note{i}', status=0, trip_id=travel.id) for i in range(10)]
