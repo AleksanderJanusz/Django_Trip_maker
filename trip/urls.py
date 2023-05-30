@@ -9,6 +9,7 @@ urlpatterns = [
     path('get_countries/', views.GetCountryDistinctApi.as_view(), name='countries_api'),
     path('get_places/', views.GetPlacesApi.as_view(), name='places_api'),
     path('get_attractions/', views.GetAttractionsApi.as_view(), name='attractions_api'),
+    path('travels/<int:pk>', views.TravelStatusSerializer.as_view(), name='travels_status'),
 
     path('places/', views.PlacesView.as_view(), name='places'),
     path('attraction/<int:pk>/', views.AttractionDetailView.as_view(), name='attractions'),
@@ -18,7 +19,6 @@ urlpatterns = [
     path('add/travel/part2/<int:pk>/', views.AddTravelStepTwoView.as_view(), name='add_travel_part2'),
     path('travels/', views.TravelView.as_view(), name='travels'),
     path('travels/details/<int:pk>/', views.TravelDetailView.as_view(), name='travel_details'),
-    path('travels/<int:pk>', views.TravelStatusSerializer.as_view(), name='travels_status'),
     path('day/<int:trip_pk>/<int:order>/', views.DayView.as_view(), name='day'),
     path('day/detail/<int:pk>/', views.DayDetailsView.as_view(), name='day_detail'),
     path('day/delete/<int:pk>/', views.DeleteDayView.as_view(), name='day_delete'),
