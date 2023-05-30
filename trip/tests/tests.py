@@ -378,7 +378,7 @@ def test_travel_details_view_logged_out():
 @pytest.mark.django_db
 def test_travel_details_view_logged_in_get(notes):
     client = Client()
-    travel = Travel.objects.first()
+    travel = Travel.objects.last()
     user = travel.user
     client.force_login(user)
     url = reverse('travel_details', kwargs={'pk': travel.pk})
@@ -453,4 +453,248 @@ def test_day_detail_view_logged_in_get(days):
     url = reverse('day_detail', kwargs={'pk': day.id})
     response = client.get(url)
     assert response.status_code == 200
+
+
+# JAK WEJSC W SUCCESS_URL
+
+
+@pytest.mark.django_db
+def test_delete_day_view_logged_out(days):
+    client = Client()
+    day = Days.objects.first()
+    num_days = len(Days.objects.all())
+    url = reverse('day_delete', kwargs={'pk': day.id})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+    assert num_days == len(Days.objects.all())
+
+
+@pytest.mark.django_db
+def test_delete_day_view_logged_in_valid(days):
+    client = Client()
+    day = Days.objects.first()
+    order = day.order
+    trip_pk = day.travel_id
+    num_days = len(Days.objects.all())
+    user = day.travel.user
+    client.force_login(user)
+    url = reverse('day_delete', kwargs={'pk': day.id})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('day_detail_delete', kwargs={'order': order, 'trip_pk': trip_pk})
+    assert response.url.startswith(redirect_url)
+    assert num_days == len(Days.objects.all()) + 1
+
+
+@pytest.mark.django_db
+def test_delete_day_view_logged_in_invalid(days, ten_users):
+    client = Client()
+    day = Days.objects.first()
+    order = day.order
+    trip_pk = day.travel_id
+    num_days = len(Days.objects.all())
+    user = ten_users[0]
+    client.force_login(user)
+    url = reverse('day_delete', kwargs={'pk': day.id})
+    response = client.get(url)
+    assert response.status_code == 403
+    assert num_days == len(Days.objects.all())
+
+
+@pytest.mark.django_db
+def test_days_delete_view_logged_out(days):
+    client = Client()
+    url = reverse('day_detail_delete', kwargs={'trip_pk': 1, 'order': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_days_delete_view_logged_in(days):
+    client = Client()
+    travel = Travel.objects.first()
+    day = Days.objects.filter(travel_id=travel.id).first()
+    user = travel.user
+    client.force_login(user)
+    url = reverse('day_detail_delete', kwargs={'trip_pk': travel.id, 'order': day.order})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert [day for day in response.context['days']] == [day for day in Days.objects.filter(travel_id=travel.id).filter(
+        order=day.order)]
+
+
+@pytest.mark.django_db
+def test_delete_travel_view_logged_out(days):
+    client = Client()
+    url = reverse('travel_delete', kwargs={'pk': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_delete_travel_view_logged_in_valid(many_travels):
+    client = Client()
+    travel = Travel.objects.first()
+    user = travel.user
+    client.force_login(user)
+    num_travels = len(Travel.objects.all())
+    url = reverse('travel_delete', kwargs={'pk': travel.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('travels')
+    assert response.url.startswith(redirect_url)
+    assert num_travels == len(Travel.objects.all()) + 1
+
+
+@pytest.mark.django_db
+def test_delete_travel_view_logged_in_invalid(many_travels):
+    client = Client()
+    travel = Travel.objects.first()
+    user = User.objects.last()
+    assert travel.user != user  # make sure they are different users
+    client.force_login(user)
+    num_travels = len(Travel.objects.all())
+    url = reverse('travel_delete', kwargs={'pk': travel.pk})
+    response = client.get(url)
+    assert response.status_code == 403
+    assert num_travels == len(Travel.objects.all())
+
+
+@pytest.mark.django_db
+def test_add_note_view_logged_out(travels):
+    client = Client()
+    url = reverse('add_note', kwargs={'pk': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_add_note_view_logged_in_get(travels):
+    client = Client()
+    travel = Travel.objects.first()
+    client.force_login(travel.user)
+    url = reverse('add_note', kwargs={'pk': travel.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_add_note__view_logged_in_post(travels):
+    client = Client()
+    travel = Travel.objects.first()
+    client.force_login(travel.user)
+    data = {
+        'note': 'note'
+    }
+    num_notes = len(TravelNotes.objects.all())
+    url = reverse('add_note', kwargs={'pk': travel.pk})
+    response = client.post(url, data)
+    assert response.status_code == 302
+    redirect_url = reverse('travel_details', kwargs={'pk': travel.pk})
+    assert response.url.startswith(redirect_url)
+    assert num_notes + 1 == len(TravelNotes.objects.all())
+    assert TravelNotes.objects.last().trip_id == travel.pk
+    assert TravelNotes.objects.last().status == travel.status
+
+
+@pytest.mark.django_db
+def test_delete_note_view_logged_out(notes):
+    client = Client()
+    url = reverse('delete_note', kwargs={'pk': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_delete_note_view_logged_in_valid(notes):
+    client = Client()
+    travel = Travel.objects.first()
+    client.force_login(travel.user)
+    url = reverse('delete_note', kwargs={'pk': travel.id})
+    num_notes = len(TravelNotes.objects.all())
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('travel_details', kwargs={'pk': travel.id})
+    assert response.url.startswith(redirect_url)
+    assert num_notes == len(TravelNotes.objects.all()) + 1
+
+
+@pytest.mark.django_db
+def test_delete_note_view_logged_in_invalid(notes, ten_users):
+    client = Client()
+    travel = Travel.objects.first()
+    client.force_login(ten_users[0])
+    url = reverse('delete_note', kwargs={'pk': travel.id})
+    num_notes = len(TravelNotes.objects.all())
+    response = client.get(url)
+    assert response.status_code == 403
+    assert num_notes == len(TravelNotes.objects.all())
+
+
+@pytest.mark.django_db
+def test_edit_note_view_logged_out(notes):
+    client = Client()
+    url = reverse('edit_note', kwargs={'pk': 1})
+    response = client.get(url)
+    assert response.status_code == 302
+    redirect_url = reverse('login')
+    assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_edit_note_view_logged_in_invalid(notes, ten_users):
+    client = Client()
+    note = TravelNotes.objects.first()
+    client.force_login(ten_users[0])
+    url = reverse('edit_note', kwargs={'pk': note.id})
+    response = client.get(url)
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_edit_note_view_logged_in_post(notes):
+    client = Client()
+    note = TravelNotes.objects.first()
+    travel = Travel.objects.get(pk=note.trip_id)
+    client.force_login(travel.user)
+    data = {
+        'note': 'note edited',
+        'status': '2'
+    }
+    url = reverse('edit_note', kwargs={'pk': note.id})
+    response = client.post(url, data)
+    assert response.status_code == 302
+    redirect_url = reverse('travel_details', kwargs={'pk': travel.id})
+    assert response.url.startswith(redirect_url)
+    assert TravelNotes.objects.get(pk=note.pk).note == 'note edited (edytowany)'
+
+
+@pytest.mark.django_db
+def test_edit_note_view_logged_in_get(notes):
+    client = Client()
+    note = TravelNotes.objects.first()
+    travel = Travel.objects.get(pk=note.trip_id)
+    client.force_login(travel.user)
+    data = {
+        'note': 'note edited',
+        'status': '2'
+    }
+    url = reverse('edit_note', kwargs={'pk': note.id})
+    response = client.post(url, data)
+    assert response.status_code == 302
+    response = client.get(url)
+    assert response.status_code == 200
+    assert TravelNotes.objects.get(pk=note.pk).note == 'note edited (edytowany)'
+    assert response.context['form']['note'].initial == 'note edited'
+
 
