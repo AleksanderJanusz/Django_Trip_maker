@@ -381,7 +381,7 @@ def test_travel_details_view_logged_in_get(notes):
     travel = Travel.objects.last()
     user = travel.user
     client.force_login(user)
-    url = reverse('travel_details', kwargs={'pk': travel.pk})
+    url = reverse('travel_details', kwargs={'pk': travel.id})
     response = client.get(url)
     my_days = Days.objects.filter(travel_id=travel.pk)
     assert response.status_code == 200
@@ -492,8 +492,6 @@ def test_delete_day_view_logged_in_valid(days):
 def test_delete_day_view_logged_in_invalid(days, ten_users):
     client = Client()
     day = Days.objects.first()
-    order = day.order
-    trip_pk = day.travel_id
     num_days = len(Days.objects.all())
     user = ten_users[0]
     client.force_login(user)
