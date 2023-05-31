@@ -60,3 +60,5 @@ def days(travels, attractions_places):
 def notes(days):
     travel = Travel.objects.first()
     return [TravelNotes.objects.create(note=f'note{i}', status=0, trip_id=travel.id) for i in range(10)]
+
+
