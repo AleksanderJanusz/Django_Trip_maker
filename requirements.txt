@@ -13,5 +13,5 @@ pytest-django==4.5.2
 pytz==2023.3
 sqlparse==0.4.4
 tomli==2.0.1
-psycopg; sys_platform == "linux"
-psycopg[binary]; sys_platform != "linux"
+#psycopg; sys_platform == "linux"
+#psycopg[binary]; sys_platform != "linux"
