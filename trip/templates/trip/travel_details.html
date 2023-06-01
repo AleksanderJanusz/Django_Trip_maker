@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <ul>
+        <li style="display: flex; justify-content: space-between">
+            <h2 class="form-a parentElement" id="trip-name">{{ trip.name }}</h2>
+            <h2><input type="text" value="{{ trip.name }}" class="d-none" id="trip-name-in"></h2>
+            <div style="display: flex">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="del-button-trip" value="Tryb usuwania">
+                </form>
+                <a href="{% url 'travels' %}" class="end-button-trip">Powrót</a>
+            </div>
+
+        </li>
+        <li>
+            <h3 style="display: flex">
+                <a href="#" class="form-a parentElement" id="my-status">
+                    Status: {{ trip.get_status_display }}
+                </a>
+
+                <select name="status" id="status" style="margin-left: 10px" class="d-none" data-pk="{{ trip.id }}">
+                    {% for choice in trip.GENRE_CHOICES %}}
+                        <option value="{{ choice.0 }}"
+                                {% if choice.0 == trip.status %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+
+            </h3>
+        </li>
+        {% for order in orders %}
+            <li>
+                <h4>
+                    <a href="{% url 'day' trip.pk order.order %}" class="form-a days parentElement">
+                        Dzień: {{ order.order }}
+                    </a>
+                </h4>
+                <ul>
+                    {% for day in days %}
+                        <li>
+                            {% if day.order == order.order %}
+                                <a class="form-a places parentElement"
+                                   href='{% url 'attractions' day.place_attraction.attraction.id %}'>
+                                    {{ day.place_attraction.place.name }}: {{ day.place_attraction.attraction.name }}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        <li>
+            <h4>
+                <a href="{% url 'add_note' trip.pk %}" class="form-a parentElement" id="note">
+                    Notatki:
+                </a>
+            </h4>
+            <ul>
+                {% for note in notes %}
+                    <a href="{% url 'edit_note' note.id %}" class="form-a days parentElement">
+                        <li><strong>Status:</strong> {{ note.get_status_display }},
+                            <strong>data:</strong> {{ note.date }}</li>
+                        <li>{{ note.note }}<br/><br/></li>
+                    </a>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    <p id="p-token" class="d-none">{{ csrf_token }}</p>
+    <script src="{% static 'js/travel_details.js' %}"></script>
+{% endblock %}

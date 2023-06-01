@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1 style="text-align: center" id="header"></h1>
+    <form method="post" id="form">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 20px">
+            <label for="select_country">Wybierz Kraj</label>
+            <select name="country" id="select_country">
+                <option>---------</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 20px" class="d-none">
+            <label for="select_country">Wybierz Miejsce</label>
+            <select name="country" id="select_place">
+                <option>---------</option>
+            </select>
+        </div>
+
+        {{ form.as_p }}
+        <input type="submit" class="end-button-trip" value="Zapisz">
+    </form>
+    <script src="{% static 'js/day.js' %}"></script>
+{% endblock %}

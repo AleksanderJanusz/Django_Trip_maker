@@ -1,0 +1,33 @@
+ul.places {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li.places {
+    background-color: #533CA6;
+    color: white;
+    font-size: 32px;
+    padding: 10px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.children {
+    border: #533CA6 solid 2px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 5px;
+    background-color: #7D5EBF;
+    font-size: 24px;
+    margin-left: -35px;
+}
+
+.grand-children {
+    padding-top: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #907ABF;
+    font-size: 24px;
+    margin-left: -32px;
+}

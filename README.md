@@ -1,1 +1,1 @@
-# Django Trip
+# Django Travel

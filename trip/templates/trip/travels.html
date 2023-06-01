@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <ul>
+        {% for travel in travels %}
+            <li class="my_trip">
+                <a href="{% url 'travel_details' travel.id %}" class="end-button-trip button-list">{{ travel.name }}</a>
+                <a href="#" class="button-list-status d-none" id="{{ travel.id }}">
+                    Status: {{ travel.get_status_display }}
+                </a>
+                <div style="display: flex;">
+                    <div style="width: 50%"></div>
+                    <div style="width: 40%">
+                        <ul style="margin: -15px 5px 20px 0" class=" d-none">
+                            {% for choice in travel.GENRE_CHOICES %}
+                                <li class="button-list-of-status" id="{{ choice.0 }}">{{ choice.1 }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+    <p id="p-token" class="d-none">{{ csrf_token }}</p>
+    <script src="{% static 'js/travels.js' %}"></script>
+{% endblock %}

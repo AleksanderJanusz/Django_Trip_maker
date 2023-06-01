@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1 style="text-align: center">Dodaj Atrakcję</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% if error %}
+            <ul class="errorlist">
+                <li>Cena jest nie prawidłowa</li>
+            </ul>
+        {% endif %}
+        <div>
+            <label for="place"><strong>Wybierz miejscowość albo <a href="{% url 'add_place' %}" class="form-a">dodaj nową</a></strong></label>
+            <select name="place">
+                {% for place in places %}
+                    <option value="{{ place.id }}">{{ place.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {{ form.as_p }}
+        <div style="display: flex">
+            <input type="checkbox" name="checkbox" style="margin-right: 5px" id="my_checkbox">
+            <label for="checkbox">Widełki</label>
+        </div>
+        <div>
+            <label>Cena:</label>
+            <label for="from" id="from" class="d-none" style="display: block">od</label>
+            <input type="number" min="0" name="from" value="0">
+        </div>
+        <div class="d-none" id="to">
+            <label for="to">do</label>
+            <input type="number" min="0" name="to" value="0">
+        </div>
+        <div style="margin-bottom: 10px">
+            <label for="persons">Za ile osób</label>
+            <input type="number" min="1" value="1" name="persons">
+        </div>
+        <input type="submit" class="end-button-trip">
+    </form>
+    <script src="{% static 'js/attraction_form.js' %}"></script>
+{% endblock %}

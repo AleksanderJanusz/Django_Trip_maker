@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="input-container">
+            <input type="text" placeholder="Wyszukaj" id="search" name="search">
+            <span class="icon">
+                <button type="submit" id="search" class="search-button">
+                    <img src="{% static 'img/search.png' %}" alt="search" class="search-image">
+                </button>
+            </span>
+        </div>
+
+    </form>
+
+    <link rel="stylesheet" href="{% static "css/places.css" %}">
+    <ul id="country" class="places">
+        {% for place in places %}
+            <li data-api="{{ place.id }}" class="places">{{ place.country }}</li>
+        {% endfor %}
+    </ul>
+    <script src="{% static 'js/places.js' %}"></script>
+{% endblock %}
+
+
