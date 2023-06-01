@@ -1,4 +1,2 @@
-
-web: gunicorn gettingstarted.wsgi
-
+gunicorn myproject.wsgi
 release: ./manage.py migrate
