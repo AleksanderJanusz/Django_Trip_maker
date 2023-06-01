@@ -1,2 +1,4 @@
+
 web: gunicorn gettingstarted.wsgi
-release: ./manage.py migrate
+
+#release: ./manage.py migrate
