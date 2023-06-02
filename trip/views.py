@@ -202,16 +202,25 @@ class TravelDetailView(LoginRequiredMixin, View):
                       {'trip': trip, 'days': days, 'orders': orders, 'notes': notes})
 
 
-class DayView(LoginRequiredMixin, View):
+class DayView(UserPassesTestMixin, View):
+
+    def test_func(self):
+        travel = Travel.objects.get(pk=self.kwargs['trip_pk'])
+        return travel.user == self.request.user
+
     def get(self, request, trip_pk, order):
         days = Days.objects.filter(travel_id=trip_pk).filter(order=order)
         return render(request, 'trip/day.html', {'days': days})
 
 
-class DayDetailsView(LoginRequiredMixin, UpdateView):
+class DayDetailsView(UserPassesTestMixin, UpdateView):
     model = Days
     fields = '__all__'
     template_name = 'trip/day_details.html'
+
+    def test_func(self):
+        day = Days.objects.get(pk=self.kwargs['pk'])
+        return day.travel.user == self.request.user
 
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -249,10 +258,15 @@ class DeleteTravelView(UserPassesTestMixin, View):
         return redirect('travels')
 
 
-class AddNote(LoginRequiredMixin, CreateView):
+class AddNote(UserPassesTestMixin, CreateView):
     model = TravelNotes
     fields = ['note']
     template_name = 'trip/add_note.html'
+
+    def test_func(self):
+        pk = self.kwargs['pk']
+        travel = Travel.objects.get(pk=pk)
+        return travel.user == self.request.user
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
