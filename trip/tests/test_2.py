@@ -50,13 +50,28 @@ def test_travel_details_view_logged_in_post(notes):
 
 
 @pytest.mark.django_db
-def test_day_view_logged_out():
+def test_day_view_logged_out(days):
     client = Client()
-    url = reverse('day', kwargs={'trip_pk': 1, 'order': 1})
+    travel = Travel.objects.first()
+    days = travel.days_set.first()
+    url = reverse('day', kwargs={'trip_pk': travel.pk, 'order': days.order})
     response = client.get(url)
     assert response.status_code == 302
     redirect_url = reverse('login')
     assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_day_view_logged_in_dif_user(days, ten_users):
+    client = Client()
+    day = Days.objects.first()
+    travel = day.travel
+    user_invalid = User.objects.last()
+    assert travel.user != user_invalid
+    client.force_login(user_invalid)
+    url = reverse('day', kwargs={'trip_pk': travel.id, 'order': day.order})
+    response = client.get(url)
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db
@@ -74,13 +89,27 @@ def test_day_view_logged_in_get(days):
 
 
 @pytest.mark.django_db
-def test_day_detail_view_logged_out():
+def test_day_detail_view_logged_out(days):
     client = Client()
-    url = reverse('day_detail', kwargs={'pk': 1})
+    day = Days.objects.first()
+    url = reverse('day_detail', kwargs={'pk': day.id})
     response = client.get(url)
     assert response.status_code == 302
     redirect_url = reverse('login')
     assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_day_detail_view_logged_in_dif_user(days, ten_users):
+    client = Client()
+    day = Days.objects.first()
+    travel = day.travel
+    user_invalid = User.objects.last()
+    assert travel.user != user_invalid
+    client.force_login(user_invalid)
+    url = reverse('day_detail', kwargs={'pk': day.id})
+    response = client.get(url)
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db
@@ -208,11 +237,24 @@ def test_delete_travel_view_logged_in_invalid(many_travels):
 @pytest.mark.django_db
 def test_add_note_view_logged_out(travels):
     client = Client()
-    url = reverse('add_note', kwargs={'pk': 1})
+    travel = Travel.objects.first()
+    url = reverse('add_note', kwargs={'pk': travel.id})
     response = client.get(url)
     assert response.status_code == 302
     redirect_url = reverse('login')
     assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_add_note_view_logged_in_dif_user(travels, ten_users):
+    client = Client()
+    travel = Travel.objects.first()
+    user_invalid = User.objects.last()
+    assert travel.user != user_invalid
+    client.force_login(user_invalid)
+    url = reverse('add_note', kwargs={'pk': travel.id})
+    response = client.get(url)
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db
@@ -292,6 +334,19 @@ def test_edit_note_view_logged_out(notes):
     assert response.status_code == 302
     redirect_url = reverse('login')
     assert response.url.startswith(redirect_url)
+
+
+@pytest.mark.django_db
+def test_edit_note_view_logged_in_dif_user(notes, ten_users):
+    client = Client()
+    note = TravelNotes.objects.first()
+    travel = Travel.objects.get(pk=note.trip_id)
+    user_invalid = User.objects.last()
+    assert travel.user != user_invalid
+    client.force_login(user_invalid)
+    url = reverse('edit_note', kwargs={'pk': note.id})
+    response = client.get(url)
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db

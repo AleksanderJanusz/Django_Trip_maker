@@ -6,10 +6,12 @@
             <h2 class="form-a parentElement" id="trip-name">{{ trip.name }}</h2>
             <h2><input type="text" value="{{ trip.name }}" class="d-none" id="trip-name-in"></h2>
             <div style="display: flex">
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="submit" class="del-button-trip" value="Tryb usuwania">
-                </form>
+                {% if user == trip.user %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="submit" class="del-button-trip" value="Tryb usuwania">
+                    </form>
+                {% endif %}
                 <a href="{% url 'travels' %}" class="end-button-trip">Powrót</a>
             </div>
 
@@ -68,5 +70,7 @@
         </li>
     </ul>
     <p id="p-token" class="d-none">{{ csrf_token }}</p>
-    <script src="{% static 'js/travel_details.js' %}"></script>
+    {% if user == trip.user  %}
+        <script src="{% static 'js/travel_details.js' %}"></script>
+    {% endif %}
 {% endblock %}
