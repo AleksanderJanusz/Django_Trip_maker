@@ -235,10 +235,9 @@ class DeleteDayView(UserPassesTestMixin, View):
 
     def get(self, request, pk):
         day = Days.objects.get(pk=pk)
-        order = day.order
         trip_pk = day.travel_id
         day.delete()
-        return redirect('day_detail_delete', order=order, trip_pk=trip_pk)
+        return redirect('travel_details', pk=trip_pk)
 
 
 class DaysDeleteView(LoginRequiredMixin, View):

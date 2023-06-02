@@ -6,10 +6,8 @@
         {% csrf_token %}
         <div class="input-container">
             <input type="text" placeholder="Wyszukaj" id="search" name="search">
-            <span class="icon">
-                <button type="submit" id="search" class="search-button">
+            <span class="icon search-button">
                     <img src="{% static 'img/search.png' %}" alt="search" class="search-image">
-                </button>
             </span>
         </div>
 
