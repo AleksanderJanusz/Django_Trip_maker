@@ -76,13 +76,23 @@ WSGI_APPLICATION = 'trip_with_me.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Amazon RDS PostgreSQL database - markup
+
 DATABASES = {
+
     'default': {
-        'HOST': '127.0.0.1',
-        'NAME': 'project_new',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'postgres',
-        'PASSWORD': 'coderslab',
+
+        'ENGINE': 'django.db.backends.postgresql',
+
+        'NAME': 'TripMakerDB',
+
+        'USER': 'olek',
+
+        'PASSWORD': 'mypassword1',
+
+        'HOST': 'tripmakerdb.chu8yvyq6hv1.eu-north-1.rds.amazonaws.com',
+
+        'PORT': '5432',
     }
 }
 
