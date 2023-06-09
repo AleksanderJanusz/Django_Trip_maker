@@ -34,7 +34,7 @@ function nameTravel(my_url, name_value, status_name) {
                 }
                 return resp.json()
             }).then(data => {
-        status_name.innerText = name_value;
+        status_name.innerText = "Status: " + name_value;
     })
 }
 
