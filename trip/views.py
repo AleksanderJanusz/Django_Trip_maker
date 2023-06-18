@@ -325,7 +325,11 @@ class EditNote(UserPassesTestMixin, UpdateView):
         if note['instance'].note.endswith('(edytowany)'):
             note['instance'].note = note['instance'].note[:-12]
         return note
-
+    
+    
+class ContactView(View):
+    def get(self, request):
+        return render(request, 'trip/contact.html')
 
 # -------------SERIALIZER---------------
 
