@@ -21,7 +21,7 @@
     <li class="left"><a href="{% url 'index' %}" class="button"
                         style="padding: 10px 0 0 0; background-color: #7D5EBF; border: none"><img
             src="{% static 'img/logo.png' %}" alt="menu"></a></li>
-    <li><a href="#" class="button">Kontakt</a></li>
+    <li><a href="{% url 'contact' %}" class="button">Kontakt</a></li>
     {% if user.is_authenticated %}
         <li><a href="{% url 'logout' %}" class="button">Logout</a></li>
         <li><a href="#" class="button"
