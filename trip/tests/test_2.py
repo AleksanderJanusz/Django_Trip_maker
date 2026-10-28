@@ -144,7 +144,6 @@ def test_delete_day_view_logged_out(days):
 def test_delete_day_view_logged_in_valid(days):
     client = Client()
     day = Days.objects.first()
-    order = day.order
     trip_pk = day.travel_id
     num_days = len(Days.objects.all())
     user = day.travel.user
@@ -152,7 +151,7 @@ def test_delete_day_view_logged_in_valid(days):
     url = reverse('day_delete', kwargs={'pk': day.id})
     response = client.get(url)
     assert response.status_code == 302
-    redirect_url = reverse('day_detail_delete', kwargs={'order': order, 'trip_pk': trip_pk})
+    redirect_url = reverse('travel_details', kwargs={'pk': trip_pk})
     assert response.url.startswith(redirect_url)
     assert num_days == len(Days.objects.all()) + 1
 
